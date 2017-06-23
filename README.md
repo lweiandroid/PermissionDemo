@@ -81,5 +81,7 @@ PermissionCallback permissionCallback：检查权限的回调接口。
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
     
-三：关于更多Android6.0权限问题，查看[我的博客](http://blog.csdn.net/liuwei187/article/details/73505363)
+三：关于更多Android6.0权限问题，请查看[我的博客](http://blog.csdn.net/liuwei187/article/details/73505363)
+
+    欢迎大家多多指教！
     
