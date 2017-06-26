@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
      */
     private void requestPermissions(){
         String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        PermissionUtil.getInstance(this).requestPermissions(true, permissions, PermissionUtil.code, new PermissionUtil.PermissionCallback(){
+        PermissionUtil.getInstance(this).requestPermissions(true, permissions, 101, new PermissionUtil.PermissionCallback(){
             @Override
             public void permittedPermissions() {
                 Toast.makeText(MainActivity.this, "用户已授权", Toast.LENGTH_LONG).show();

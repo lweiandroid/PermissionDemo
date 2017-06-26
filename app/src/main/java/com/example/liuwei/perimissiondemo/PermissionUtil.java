@@ -23,7 +23,7 @@ import java.util.List;
 public class PermissionUtil {
     private static PermissionUtil permissionUtil;
     private PermissionCallback callback;
-    public static int code = 200;
+    public static int code;
     private static final String TAG = "PermissionUtil";
     private static final String NO_LONGER_ASK = "no_longer_ask";
     private static Activity activity;
@@ -44,6 +44,7 @@ public class PermissionUtil {
      */
     public void requestPermissions(boolean isNeedShowRequestPermissionRationale, String[] permissions, int requestCode, PermissionCallback permissionCallback){
         callback = permissionCallback;
+        code = requestCode;
         if(permissions != null && permissions.length > 0){
             String[] denyPermissions = getDenyPermissions(permissions);
             if(denyPermissions.length > 0){
