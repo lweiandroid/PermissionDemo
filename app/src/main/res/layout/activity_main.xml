@@ -23,4 +23,13 @@
         android:text="申请多个权限"
         android:textSize="20sp"/>
 
+    <TextView
+        android:layout_marginTop="100dp"
+        android:id="@+id/fragment_request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="fragment中申请权限"
+        android:textSize="20sp"/>
+
 </LinearLayout>

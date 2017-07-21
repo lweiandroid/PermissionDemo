@@ -2,6 +2,7 @@ package com.example.liuwei.perimissiondemo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +23,17 @@ import java.util.List;
  */
 
 public class PermissionUtil {
+
     private static PermissionUtil permissionUtil;
     private PermissionCallback callback;
     public static int code;
     private static final String TAG = "PermissionUtil";
     private static final String NO_LONGER_ASK = "no_longer_ask";
     private static Activity activity;
-    public static PermissionUtil getInstance(Activity transferActivity){
+    private static Fragment fragment;
+    public static PermissionUtil getInstance(Activity transferActivity, Fragment transferFragment){
         activity = transferActivity;
+        fragment = transferFragment;
         if(permissionUtil == null){
             permissionUtil = new PermissionUtil();
         }
@@ -44,18 +49,28 @@ public class PermissionUtil {
      */
     public void requestPermissions(boolean isNeedShowRequestPermissionRationale, String[] permissions, int requestCode, PermissionCallback permissionCallback){
         callback = permissionCallback;
-        code = requestCode;
         if(permissions != null && permissions.length > 0){
             String[] denyPermissions = getDenyPermissions(permissions);
             if(denyPermissions.length > 0){
+                Log.d("xxx", "denyPermission.length > 0");
                 if(isNeedShowRequestPermissionRationale){
                     if (shouldShowRequestPermissionRationale(denyPermissions)) {
+                        Log.d("xxx", "showRequestPermissionRationale");
                         showRequestPermissionRationale(denyPermissions, callback, requestCode);
+                    } else {
+                        if(fragment != null){
+                            Log.d("xxx", "requestPermissin");
+                            fragment.requestPermissions(denyPermissions, requestCode);
+                        } else {
+                            ActivityCompat.requestPermissions(activity, denyPermissions, requestCode);
+                        }
+                    }
+                } else {
+                    if(fragment != null){
+                        fragment.requestPermissions(denyPermissions, requestCode);
                     } else {
                         ActivityCompat.requestPermissions(activity, denyPermissions, requestCode);
                     }
-                } else {
-                    ActivityCompat.requestPermissions(activity, denyPermissions, requestCode);
                 }
             } else {
                 callback.permittedPermissions();
@@ -123,9 +138,17 @@ public class PermissionUtil {
      * @return
      */
     private boolean shouldShowRequestPermissionRationale(String[] permissions){
-        for(String permission:permissions){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)){
-                return true;
+        if(fragment != null){
+            for(String permission:permissions) {
+                if(fragment.shouldShowRequestPermissionRationale(permission)){
+                    return true;
+                }
+            }
+        } else {
+            for(String permission:permissions) {
+                if(ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)){
+                    return true;
+                }
             }
         }
         return false;
@@ -143,7 +166,11 @@ public class PermissionUtil {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //继续请求权限
-                        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+                        if(fragment != null){
+                            fragment.requestPermissions(permissions, requestCode);
+                        } else {
+                            ActivityCompat.requestPermissions(activity, permissions, requestCode);
+                        }
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -159,7 +186,7 @@ public class PermissionUtil {
     /**
      * 申请权限的结果回调接口
      */
-    interface PermissionCallback{
+    public interface PermissionCallback{
         void permittedPermissions(); //允许申请的权限
         void rejectPermission(String[] rejectPermissions);//申请的权限中有未授权的权限，参数为未授权的权限集合
     }

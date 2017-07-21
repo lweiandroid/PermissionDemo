@@ -7,13 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.provider.Settings;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +19,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private static int REQUEST_PERMISSION_CALL_PHONE = 100;
     private TextView request_permission_tv;
     private TextView request_permissions_tv;
+    private TextView fragment_request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +33,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         request_permission_tv.setOnClickListener(this);
         request_permissions_tv = (TextView )findViewById(R.id.request_permissions);
         request_permissions_tv.setOnClickListener(this);
+        fragment_request = (TextView)findViewById(R.id.fragment_request);
+        fragment_request.setOnClickListener(this);
     }
 
     /**
@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
      */
     private void requestPermissions(){
         String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        PermissionUtil.getInstance(this).requestPermissions(true, permissions, 101, new PermissionUtil.PermissionCallback(){
+        PermissionUtil.getInstance(this, null).requestPermissions(true, permissions, PermissionUtil.code, new PermissionUtil.PermissionCallback(){
             @Override
             public void permittedPermissions() {
                 Toast.makeText(MainActivity.this, "用户已授权", Toast.LENGTH_LONG).show();
@@ -60,9 +60,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 使用未封装的原生api申请电话权限
      */
     private void requestPermission(){
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission
                 .CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {//用户未授权
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CALL_PHONE)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
                 //给用户一个申请权限的解释
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("说明")
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int which) {
                                 //继续请求权限
                                 ActivityCompat.requestPermissions(MainActivity.this, new
-                                        String[]{android.Manifest.permission.CALL_PHONE}, REQUEST_PERMISSION_CALL_PHONE);
+                                        String[]{Manifest.permission.CALL_PHONE}, REQUEST_PERMISSION_CALL_PHONE);
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             } else {
                 //请求权限
                 ActivityCompat.requestPermissions(this, new
-                                String[]{android.Manifest.permission.CALL_PHONE},
+                                String[]{Manifest.permission.CALL_PHONE},
                         REQUEST_PERMISSION_CALL_PHONE);
             }
 
@@ -105,15 +105,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 callPhone();
             } else {
                 //权限被用户拒绝
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.CALL_PHONE)) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CALL_PHONE)) {
                     //用户点击了“不在询问”弹框，则再次申请权限时跳到设置页提醒用户手动设置权限
-                    PermissionUtil.getInstance(this).intentSetting(new String[]{android.Manifest.permission.CALL_PHONE});
+                    PermissionUtil.getInstance(this, null).intentSetting(new String[]{Manifest.permission.CALL_PHONE});
                 } else {
                     Toast.makeText(MainActivity.this, "用户未授权", Toast.LENGTH_LONG).show();
                 }
             }
         } else {
-            PermissionUtil.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
+            PermissionUtil.getInstance(this, null).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
                 @Override
                 public void permittedPermissions() {
                     Toast.makeText(MainActivity.this, "用户已授权", Toast.LENGTH_LONG).show();
@@ -150,6 +150,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case R.id.request_permissions:
                 //点击多个权限，使用的是封装后的工具类PermissionUtil.java
                 requestPermissions();
+                break;
+            case R.id.fragment_request:
+                Intent intent = new Intent(this, DynamicAddActivity.class);
+                startActivity(intent);
                 break;
         }
     }
