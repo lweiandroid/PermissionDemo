@@ -1,5 +1,5 @@
 # PermissionDemo
-Android6.0 runtime permissions
+Android6.0 runtime permissions,支持在Activity和Fragment中申请权限：
 效果图如下：
 ![image](https://github.com/lweiandroid/PermissionDemo/blob/master/gif/permission_demo.gif)  
 一：工具类PermissionUtil.java中方法解析: 
