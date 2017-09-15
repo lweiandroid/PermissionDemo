@@ -40,8 +40,8 @@ public class TwoFragment extends Fragment{
     }
 
     private void requestPermissions(){
-        String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        PermissionUtil.getInstance(getActivity(), this).requestPermissions(true, permissions, PermissionUtil.code, new PermissionUtil.PermissionCallback(){
+        String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        PermissionUtil.getInstance(this).requestPermissions(true, permissions, PermissionUtil.fragmentCode, new PermissionUtil.PermissionCallback(){
             @Override
             public void permittedPermissions() {
                 Toast.makeText(getActivity(), "用户已授权", Toast.LENGTH_LONG).show();
@@ -57,7 +57,7 @@ public class TwoFragment extends Fragment{
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionUtil.getInstance(getActivity(), this).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
+        PermissionUtil.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
             @Override
             public void permittedPermissions() {
                 Toast.makeText(getActivity(), "用户已授权", Toast.LENGTH_LONG).show();

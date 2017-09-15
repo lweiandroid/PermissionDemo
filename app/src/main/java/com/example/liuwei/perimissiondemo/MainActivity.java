@@ -41,8 +41,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 使用封装后的工具类PermissionUtil请求多个权限
      */
     private void requestPermissions(){
-        String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        PermissionUtil.getInstance(this, null).requestPermissions(true, permissions, PermissionUtil.code, new PermissionUtil.PermissionCallback(){
+        String[] permissions = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        PermissionUtil.getInstance(this).requestPermissions(true, permissions, PermissionUtil.testCode, new PermissionUtil.PermissionCallback(){
             @Override
             public void permittedPermissions() {
                 Toast.makeText(MainActivity.this, "用户已授权", Toast.LENGTH_LONG).show();
@@ -107,13 +107,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 //权限被用户拒绝
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.CALL_PHONE)) {
                     //用户点击了“不在询问”弹框，则再次申请权限时跳到设置页提醒用户手动设置权限
-                    PermissionUtil.getInstance(this, null).intentSetting(new String[]{Manifest.permission.CALL_PHONE});
+                    PermissionUtil.getInstance(this).intentSetting(new String[]{Manifest.permission.CALL_PHONE});
                 } else {
                     Toast.makeText(MainActivity.this, "用户未授权", Toast.LENGTH_LONG).show();
                 }
             }
         } else {
-            PermissionUtil.getInstance(this, null).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
+            PermissionUtil.getInstance(this).onRequestPermissionsResult(requestCode, permissions, grantResults, new PermissionUtil.PermissionCallback() {
                 @Override
                 public void permittedPermissions() {
                     Toast.makeText(MainActivity.this, "用户已授权", Toast.LENGTH_LONG).show();
